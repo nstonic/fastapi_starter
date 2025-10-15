@@ -1,0 +1,32 @@
+[project]
+name = "NAME"
+version = "0.0.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12, <3.13"
+dependencies = [
+    "alembic>=1.17.0",
+    "asyncpg>=0.30.0",
+    "fastapi[standard]>=0.119.0",
+    "pydantic-settings>=2.11.0",
+    "pytest>=8.4.2",
+    "pytest-anyio>=0.0.0",
+    "sqlalchemy>=2.0.44",
+    "trio>=0.31.0",
+]
+
+[tool.mypy]
+python_version = 3.12
+ignore_missing_imports = true
+disallow_untyped_defs = true
+plugins = [
+    "pydantic.mypy",
+]
+exclude = [
+    "migrations",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
+

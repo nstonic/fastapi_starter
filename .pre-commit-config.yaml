@@ -1,0 +1,27 @@
+fail_fast: true
+repos:
+  - repo: local
+    hooks:
+      - id: editorconfig-checker
+        name: editorconfig-checker
+        entry: docker compose run -T --rm editorconfig-checker
+        language: system
+        pass_filenames: no
+
+      - id: linters-ruff
+        name: ruff
+        entry: uvx --python 3.12 ruff check ./
+        language: system
+        pass_filenames: no
+
+      - id: linters-mypy
+        name: mypy
+        entry: uvx --python 3.12 --with pydantic mypy ./
+        language: system
+        pass_filenames: no
+
+      - id: test
+        name: pytest
+        entry: docker compose run --rm --workdir /opt/app/ test uv run pytest tests
+        language: system
+        pass_filenames: no

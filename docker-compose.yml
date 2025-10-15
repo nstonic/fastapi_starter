@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16.9-bookworm
+    environment:
+      POSTGRES_USER: postgres_user
+      POSTGRES_PASSWORD: postgres_password
+      POSTGRES_DB: postgres_db
+    volumes:
+      - postgres_data_test:/var/lib/postgresql/data
+      - ./test_data:/test_data
+  pgadmin:
+    image: dpage/pgadmin4:8.6
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@pgadmin.com
+      PGADMIN_DEFAULT_PASSWORD: password
+      PGADMIN_LISTEN_PORT: 80
+    ports:
+      - "8080:80"
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    depends_on:
+      - postgres
+
+  backend:
+    container_name: backend
+    build:
+      context: ./
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DSN: postgresql+asyncpg://postgres_user:postgres_password@postgres:5432/postgres_db
+    ports:
+      - 8000:80
+    volumes:
+      - ./src:/opt/app/src/
+      - ./pyproject.toml:/opt/app/pyproject.toml
+      - ./uv.lock:/opt/app/uv.lock
+      - ./alembic.ini:/opt/app/alembic.ini
+    command: "fastapi dev main.py --port 80 --host 0.0.0.0"
+    depends_on:
+      - postgres
+
+  test:
+    container_name: fastai-test
+    build:
+      context: ./
+    ports:
+      - 127.0.0.1:8000:80
+    volumes:
+      - ./src:/opt/app/src/
+      - ./pyproject.toml:/opt/app/pyproject.toml
+      - ./uv.lock:/opt/app/uv.lock
+      - ./alembic.ini:/opt/app/alembic.ini
+      - ./tests:/opt/app/tests
+    command: "echo Skipped"
+
+  editorconfig-checker:
+    image: mstruebing/editorconfig-checker:v3.0.3
+    volumes:
+      # mount repository top level folder with .editorconfig file and source code to check with editorconfig-checker
+      - ./:/check
+
+volumes:
+  postgres_data_test:
+  pgadmin:
