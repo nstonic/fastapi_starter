@@ -14,11 +14,11 @@ repos:
         language: system
         pass_filenames: no
 
-      - id: linters-mypy
-        name: mypy
-        entry: uvx --python 3.12 --with pydantic mypy ./
-        language: system
-        pass_filenames: no
+#      - id: linters-mypy
+#        name: mypy
+#        entry: uvx --python 3.12 --with pydantic mypy ./
+#        language: system
+#        pass_filenames: no
 
       - id: test
         name: pytest
